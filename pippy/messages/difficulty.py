@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Any
 from pippy.messages.request import Request
 from pippy.utils import Mod
@@ -62,7 +63,7 @@ class DifficultyRequest(Request[DifficultyAttributes]):
     def request_type(cls):
         return 'difficulty'
 
-    def __init__(self, beatmap_path: str, mods: list[Mod]):
+    def __init__(self, beatmap_path: Path, mods: list[Mod]):
         self.beatmap_path = beatmap_path
         self.mods = mods
 
@@ -86,6 +87,6 @@ class DifficultyRequest(Request[DifficultyAttributes]):
 
     def to_dict(self):
         return super().to_dict() | {
-            'beatmap_path': self.beatmap_path,
+            'beatmap_path': str(self.beatmap_path.absolute()),
             'mods': [mod.value for mod in self.mods]
         }

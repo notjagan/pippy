@@ -1,6 +1,6 @@
 from pippy.messages.request import Request
 from pippy.messages.difficulty import DifficultyAttributes
-from pippy.utils import Mod, ScoreStatistics
+from pippy.utils import Mod, ScoreInfo
 
 
 class PerformanceAttributes:
@@ -34,11 +34,11 @@ class PerformanceRequest(Request[PerformanceAttributes]):
     def __init__(
         self,
         difficulty_attributes: DifficultyAttributes,
-        score_statistics: ScoreStatistics,
+        score_info: ScoreInfo,
         mods: list[Mod]
     ):
         self.difficulty_attributes = difficulty_attributes
-        self.score_statistics = score_statistics
+        self.score_info = score_info
         self.mods = mods
 
     def _process_response(self, data):
@@ -55,7 +55,7 @@ class PerformanceRequest(Request[PerformanceAttributes]):
     def to_dict(self):
         return super().to_dict() | {
             'attributes': self.difficulty_attributes.to_dict(),
-            'statistics': self.score_statistics.to_dict() | {
+            'score_info': self.score_info.to_dict() | {
                 'mods': [mod.value for mod in self.mods]
             }
         }

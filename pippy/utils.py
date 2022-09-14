@@ -27,7 +27,7 @@ class Mod(Enum):
     TargetPractice = 'TP'
 
 
-class ScoreStatistics:
+class ScoreInfo:
     """Data class containing metrics for an individual score."""
 
     def __init__(

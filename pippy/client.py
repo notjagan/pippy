@@ -1,4 +1,5 @@
 from os import PathLike
+from pathlib import Path
 from typing import Callable, Concatenate, TypeVar, ParamSpec
 
 import zmq
@@ -6,7 +7,7 @@ import zmq
 from pippy.messages import DifficultyRequest, HeartbeatRequest, Request
 from pippy.messages.difficulty import DifficultyAttributes
 from pippy.messages.performance import PerformanceRequest
-from pippy.utils import Mod, RequestProcessingError, ScoreStatistics
+from pippy.utils import Mod, RequestProcessingError, ScoreInfo
 
 T = TypeVar('T')
 P = ParamSpec('P')
@@ -72,26 +73,22 @@ class PippyClient:
     @client_method
     def get_difficulty_attributes(
         self,
-        beatmap_path: str | bytes | PathLike,
+        beatmap_path: str | PathLike,
         mods: list[Mod] | None=None
     ) -> DifficultyRequest:
         """Obtains difficulty information for a beatmap with the given mods."""
-        if isinstance(beatmap_path, bytes):
-            beatmap_path_str = beatmap_path.decode()
-        else:
-            beatmap_path_str = str(beatmap_path)
         if mods is None:
             mods = []
-        return DifficultyRequest(beatmap_path_str, mods)
+        return DifficultyRequest(Path(beatmap_path), mods)
 
     @client_method
     def get_performance_attributes(
         self,
         difficulty_attributes: DifficultyAttributes,
-        score_statistics: ScoreStatistics,
+        score_info: ScoreInfo,
         mods: list[Mod] | None = None
     ) -> PerformanceRequest:
         """Obtains performance statistics for a play on a given map."""
         if mods is None:
             mods = []
-        return PerformanceRequest(difficulty_attributes, score_statistics, mods)
+        return PerformanceRequest(difficulty_attributes, score_info, mods)

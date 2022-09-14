@@ -9,7 +9,7 @@ namespace pippy.Server.Performance {
         [JsonProperty("attributes")]
         public readonly OsuDifficultyAttributes DifficultyAttributes;
 
-        [JsonProperty("statistics")]
+        [JsonProperty("score_info")]
         public readonly ScoreInfoWrapper ScoreInfo;
 
         public PerformanceRequest(OsuDifficultyAttributes attributes, ScoreInfoWrapper scoreInfo) {
