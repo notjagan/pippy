@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod, abstractproperty
-from types import NoneType
 from typing import Any, Generic, TypeVar
 
 from pippy.utils import RequestProcessingError

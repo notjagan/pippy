@@ -1,9 +1,8 @@
-from types import NoneType
 from typing import Any
 from pippy.messages.request import Request
 
 
-class HeartbeatRequest(Request[NoneType]):
+class HeartbeatRequest(Request[None]):
     """Request to ensure connection with server is alive."""
 
     @classmethod
@@ -11,7 +10,7 @@ class HeartbeatRequest(Request[NoneType]):
     def request_type(cls):
         return 'heartbeat'
 
-    def _process_response(self, _: dict[str, Any]):
+    def _process_response(self, _):
         return None
 
     def to_dict(self):

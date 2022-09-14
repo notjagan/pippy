@@ -1,3 +1,4 @@
+from typing import Any
 from pippy.messages.request import Request
 from pippy.utils import Mod
 
@@ -15,7 +16,11 @@ class DifficultyAttributes:
         flashlight_difficulty: float,
         slider_factor: float,
         approach_rate: float,
-        overall_difficulty: float
+        overall_difficulty: float,
+        drain_rate: float,
+        hit_circle_count: float,
+        slider_count: float,
+        spinner_count: float
     ):
         self.star_rating = star_rating
         self.max_combo = max_combo
@@ -26,8 +31,12 @@ class DifficultyAttributes:
         self.slider_factor = slider_factor
         self.approach_rate = approach_rate
         self.overall_difficulty = overall_difficulty
+        self.drain_rate = drain_rate
+        self.hit_circle_count = hit_circle_count
+        self.slider_count = slider_count
+        self.spinner_count = spinner_count
 
-    def to_dict(self):
+    def to_dict(self) -> dict[str, Any]:
         return {
             'star_rating': self.star_rating,
             'max_combo': self.max_combo,
@@ -37,7 +46,11 @@ class DifficultyAttributes:
             'flashlight_difficulty': self.flashlight_difficulty,
             'slider_factor': self.slider_factor,
             'approach_rate': self.approach_rate,
-            'overall_difficulty': self.overall_difficulty
+            'overall_difficulty': self.overall_difficulty,
+            'drain_rate': self.drain_rate,
+            'hit_circle_count': self.hit_circle_count,
+            'slider_count': self.slider_count,
+            'spinner_count': self.spinner_count
         }
 
 
@@ -64,7 +77,11 @@ class DifficultyRequest(Request[DifficultyAttributes]):
             flashlight_difficulty=attributes['flashlight_difficulty'],
             slider_factor=attributes['slider_factor'],
             approach_rate=attributes['approach_rate'],
-            overall_difficulty=attributes['overall_difficulty']
+            overall_difficulty=attributes['overall_difficulty'],
+            drain_rate=attributes['drain_rate'],
+            hit_circle_count=attributes['hit_circle_count'],
+            slider_count=attributes['slider_count'],
+            spinner_count=attributes['spinner_count']
         )
 
     def to_dict(self):

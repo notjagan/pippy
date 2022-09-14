@@ -1,15 +1,15 @@
 ﻿using Newtonsoft.Json;
-using osu.Game.Rulesets.Difficulty;
+using osu.Game.Rulesets.Osu.Difficulty;
 
 namespace pippy.Server.Performance {
     internal class DifficultyResponse : IResponse {
-        public string Type { get; } = "difficulty";/
+        public string Type { get; } = "difficulty";
 
         [JsonProperty("attributes")]
-        public DifficultyAttributes Attributes;
+        public OsuDifficultyAttributes DifficultyAttributes;
 
-        public DifficultyResponse(DifficultyAttributes attributes) {
-            Attributes = attributes;
+        public DifficultyResponse(OsuDifficultyAttributes attributes) {
+            DifficultyAttributes = attributes;
         }
     }
 }

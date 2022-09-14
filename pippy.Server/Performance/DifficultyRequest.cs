@@ -3,6 +3,7 @@ using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Osu;
 using osu.Game.Rulesets.Osu.Difficulty;
+using osu.Game.Rulesets.Osu.Mods;
 
 namespace pippy.Server.Performance {
     internal class DifficultyRequest : IRequest {
@@ -23,7 +24,7 @@ namespace pippy.Server.Performance {
         public IResponse GenerateResponse() {
             var beatmap = new FlatFileWorkingBeatmap(BeatmapPath);
             var calculator = new OsuDifficultyCalculator(new OsuRuleset().RulesetInfo, beatmap);
-            var attributes = calculator.Calculate(Mods);
+            var attributes = (OsuDifficultyAttributes) calculator.Calculate(Mods.Append(new OsuModClassic()));
             return new DifficultyResponse(attributes);
         }
     }

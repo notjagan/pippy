@@ -8,6 +8,8 @@ namespace pippy.Server.Performance {
             return objectType == typeof(Mod);
         }
 
+        public override bool CanWrite => false;
+
         public override bool CanRead => true;
 
         public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer) {
@@ -17,8 +19,7 @@ namespace pippy.Server.Performance {
         }
 
         public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer) {
-            var mods = value as Mod[];
-            serializer.Serialize(writer, mods?.Select(mod => mod.Acronym));
+            throw new NotImplementedException();
         }
     }
 }

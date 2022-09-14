@@ -1,10 +1,33 @@
 ﻿using NetMQ;
 using NetMQ.Sockets;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using osu.Game.Rulesets.Osu.Difficulty;
+using System.Reflection;
 
 namespace pippy.Server {
     internal static class Server {
         private static void Main() {
+            var resolver = new OverrideContractResolver(new Dictionary<MemberInfo, JsonProperty> {
+                {
+                    typeof(OsuDifficultyAttributes).GetProperty("DrainRate")!,
+                    new JsonProperty { PropertyName = "drain_rate" }
+                },
+                {
+                    typeof(OsuDifficultyAttributes).GetProperty("HitCircleCount")!,
+                    new JsonProperty { PropertyName = "hit_circle_count" }
+                },
+                {
+                    typeof(OsuDifficultyAttributes).GetProperty("SliderCount")!,
+                    new JsonProperty { PropertyName = "slider_count" }
+                },
+                {
+                    typeof(OsuDifficultyAttributes).GetProperty("SpinnerCount")!,
+                    new JsonProperty { PropertyName = "spinner_count" }
+                }
+            });
+            var settings = new JsonSerializerSettings { ContractResolver = resolver };
+
             using var server = new ResponseSocket();
             server.Bind("tcp://*:7271");
             while (true) {
@@ -14,7 +37,7 @@ namespace pippy.Server {
                     IRequest? request = null;
                     string? errorMessage = null;
                     try {
-                        request = JsonConvert.DeserializeObject<IRequest>(message);
+                        request = JsonConvert.DeserializeObject<IRequest>(message, settings);
                     } catch (JsonSerializationException) {
                         errorMessage = "Invalid request body";
                     } catch (Exception ex) {
@@ -30,7 +53,7 @@ namespace pippy.Server {
                         response = request.GenerateResponse();
                     }
 
-                    server.SendFrame(JsonConvert.SerializeObject(response));
+                    server.SendFrame(JsonConvert.SerializeObject(response, settings));
                 } catch (Exception ex) {
                     Console.WriteLine("Unexpected error during server loop:");
                     Console.WriteLine(ex.Message);
