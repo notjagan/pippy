@@ -1,55 +1,14 @@
-from abc import ABC, abstractmethod, abstractproperty
-from types import NoneType
-from typing import Any, Callable, Concatenate, Generic, TypeVar, ParamSpec
+from os import PathLike
+from typing import Callable, Concatenate, TypeVar, ParamSpec
 
 import zmq
+
+from pippy.messages import DifficultyRequest, HeartbeatRequest, Request
+from pippy.utils import Mod, RequestProcessingError
 
 T = TypeVar('T')
 P = ParamSpec('P')
 RequestArgs = Concatenate['PippyClient', P]
-
-
-class RequestProcessingError(Exception):
-    """Exception class for failure during communication with pippy server"""
-
-
-class Request(ABC, Generic[T]):
-    @classmethod
-    @abstractproperty
-    def request_type(cls) -> str:
-        """Type name associated with request class."""
-        raise NotImplementedError()
-
-    @abstractmethod
-    def _process_response(self, data: dict[str, Any]) -> T:
-        """Helper method to convert a response to the desired return type."""
-        raise NotImplementedError()
-
-    def process_response(self, data: dict[str, Any]) -> T:
-        """Processes a pippy server response and deserializes the encoded object."""
-        if data['type'] == 'error':
-            raise RequestProcessingError(data['message'])
-        elif data['type'] == self.request_type:
-            return self._process_response(data)
-        else:
-            raise RequestProcessingError("Unexpected message type from pippy server")
-
-    def to_dict(self) -> dict[str, Any]:
-        """Produces a JSON-serializable dictionary encoding relevant fields."""
-        return { 'type': self.request_type }
-
-
-class HeartbeatRequest(Request[NoneType]):
-    @classmethod
-    @property
-    def request_type(cls):
-        return 'heartbeat'
-
-    def _process_response(self, _: dict[str, Any]):
-        return None
-
-    def to_dict(self):
-        return super().to_dict()
 
 
 def client_method(func: Callable[RequestArgs[P], Request[T]]) -> Callable[RequestArgs[P], T]:
@@ -70,6 +29,8 @@ class PippyClient:
     def start(self):
         """Connects to the pippy server."""
         self.socket.connect(f'tcp://localhost:{self.port}')
+        # ensure connection is alive
+        self.heartbeat()
 
     def stop(self):
         """Disconnects from the pippy server."""
@@ -103,3 +64,12 @@ class PippyClient:
     def heartbeat(self) -> HeartbeatRequest:
         """Sends a request to ensure the pippy server is alive."""
         return HeartbeatRequest()
+
+    @client_method
+    def get_difficulty_attributes(self, beatmap_path: str | bytes | PathLike, mods: list[Mod]=[]) -> DifficultyRequest:
+        """Obtains difficulty information for a beatmap with the given mods."""
+        if isinstance(beatmap_path, bytes):
+            beatmap_path_str = beatmap_path.decode()
+        else:
+            beatmap_path_str = str(beatmap_path)
+        return DifficultyRequest(beatmap_path_str, mods)
