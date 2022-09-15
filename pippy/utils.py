@@ -1,3 +1,4 @@
+from dataclasses import asdict, dataclass
 from enum import Enum
 from typing import Any
 
@@ -27,28 +28,14 @@ class Mod(Enum):
     TargetPractice = 'TP'
 
 
+@dataclass
 class ScoreInfo:
     """Data class containing metrics for an individual score."""
-
-    def __init__(
-        self,
-        count_300: int,
-        count_100: int,
-        count_50: int,
-        count_miss: int,
-        max_combo: int
-    ):
-        self.count_300 = count_300
-        self.count_100 = count_100
-        self.count_50 = count_50
-        self.count_miss = count_miss
-        self.max_combo = max_combo
+    count_300: int
+    count_100: int
+    count_50: int
+    count_miss: int
+    max_combo: int
 
     def to_dict(self) -> dict[str, Any]:
-        return {
-            'count_300': self.count_300,
-            'count_100': self.count_100,
-            'count_50': self.count_50,
-            'count_miss': self.count_miss,
-            'max_combo': self.max_combo
-        }
+        return asdict(self)
