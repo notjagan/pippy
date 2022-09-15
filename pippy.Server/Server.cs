@@ -1,62 +1,31 @@
-﻿using NetMQ;
-using NetMQ.Sockets;
+﻿using NetMQ.Sockets;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using osu.Game.Rulesets.Osu.Difficulty;
-using System.Reflection;
 
 namespace pippy.Server {
     internal static class Server {
         private static void Main() {
-            var resolver = new OverrideContractResolver(new Dictionary<MemberInfo, JsonProperty> {
-                {
-                    typeof(OsuDifficultyAttributes).GetProperty("DrainRate")!,
-                    new JsonProperty { PropertyName = "drain_rate" }
-                },
-                {
-                    typeof(OsuDifficultyAttributes).GetProperty("HitCircleCount")!,
-                    new JsonProperty { PropertyName = "hit_circle_count" }
-                },
-                {
-                    typeof(OsuDifficultyAttributes).GetProperty("SliderCount")!,
-                    new JsonProperty { PropertyName = "slider_count" }
-                },
-                {
-                    typeof(OsuDifficultyAttributes).GetProperty("SpinnerCount")!,
-                    new JsonProperty { PropertyName = "spinner_count" }
-                }
-            });
-            var settings = new JsonSerializerSettings { ContractResolver = resolver };
-
+            Console.WriteLine("Starting server on port 7271.");
             using var server = new ResponseSocket();
             server.Bind("tcp://*:7271");
             while (true) {
+                IRequest request;
                 try {
-                    var message = server.ReceiveFrameString();
+                    request = server.Receive<IRequest>();
+                    Console.WriteLine("Received request of type {0}.", request.GetType());
+                } catch (JsonSerializationException ex) {
+                    var message = String.Format("Invalid request body: {0}", ex.Message);
+                    server.Send(new ErrorResponse(message));
+                    continue;
+                }
 
-                    IRequest? request = null;
-                    string? errorMessage = null;
-                    try {
-                        request = JsonConvert.DeserializeObject<IRequest>(message, settings);
-                    } catch (JsonSerializationException) {
-                        errorMessage = "Invalid request body";
-                    } catch (Exception ex) {
-                        errorMessage = "Unknown error while deserializing request";
-                        Console.WriteLine("Error encountered while deserializing request:");
-                        Console.WriteLine(ex.Message);
-                    }
-
-                    IResponse response;
-                    if (request is null) {
-                        response = new ErrorResponse(errorMessage);
-                    } else {
-                        response = request.GenerateResponse();
-                    }
-
-                    server.SendFrame(JsonConvert.SerializeObject(response, settings));
+                try {
+                    var response = request.GenerateResponse();
+                    server.Send(response);
                 } catch (Exception ex) {
-                    Console.WriteLine("Unexpected error during server loop:");
+                    Console.WriteLine("Error encountered while sending response:");
                     Console.WriteLine(ex.Message);
+                    var message = String.Format("Unknown error while sending response: {0}", ex.Message);
+                    server.Send(new ErrorResponse(message));
                 }
             }
         }
