@@ -12,6 +12,3 @@ class HeartbeatRequest(Request[None]):
 
     def _process_response(self, _):
         return None
-
-    def to_dict(self):
-        return super().to_dict()

@@ -4,7 +4,7 @@ from typing import Callable, Concatenate, TypeVar, ParamSpec
 
 import zmq
 
-from pippy.messages import DifficultyRequest, HeartbeatRequest, Request
+from pippy.messages import DifficultyRequest, HeartbeatRequest, MaxComboRequest, Request
 from pippy.messages.difficulty import DifficultyAttributes
 from pippy.messages.performance import PerformanceRequest
 from pippy.utils import Mod, RequestProcessingError, ScoreInfo
@@ -92,3 +92,7 @@ class PippyClient:
         if mods is None:
             mods = []
         return PerformanceRequest(difficulty_attributes, score_info, mods)
+
+    @client_method
+    def get_max_combo(self, beatmap_path: str | PathLike):
+        return MaxComboRequest(Path(beatmap_path))

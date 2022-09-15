@@ -1,4 +1,4 @@
-from dataclasses import asdict, dataclass
+import dataclasses
 from pathlib import Path
 from typing import Any
 
@@ -6,7 +6,7 @@ from pippy.messages.request import Request
 from pippy.utils import Mod
 
 
-@dataclass
+@dataclasses.dataclass
 class DifficultyAttributes:
     """Data class containing difficulty information for a beatmap."""
     star_rating: float
@@ -23,7 +23,7 @@ class DifficultyAttributes:
     flashlight_rating: float | None=None
 
     def to_dict(self) -> dict[str, Any]:
-        data = asdict(self)
+        data = dataclasses.asdict(self)
         if data['flashlight_rating'] is None:
             data.pop('flashlight_rating')
         return data

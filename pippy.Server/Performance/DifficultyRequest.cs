@@ -10,7 +10,7 @@ namespace pippy.Server.Performance {
         public string Type { get; } = "difficulty";
 
         [JsonProperty("beatmap_path")]
-        private readonly string BeatmapPath;
+        public readonly string BeatmapPath;
 
         [JsonProperty("mods")]
         [JsonConverter(typeof(ModListConverter))]

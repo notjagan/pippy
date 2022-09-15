@@ -1,4 +1,4 @@
-from dataclasses import asdict, dataclass
+import dataclasses
 from enum import Enum
 from typing import Any
 
@@ -28,7 +28,7 @@ class Mod(Enum):
     TargetPractice = 'TP'
 
 
-@dataclass
+@dataclasses.dataclass
 class ScoreInfo:
     """Data class containing metrics for an individual score."""
     count_300: int
@@ -38,4 +38,4 @@ class ScoreInfo:
     max_combo: int
 
     def to_dict(self) -> dict[str, Any]:
-        return asdict(self)
+        return dataclasses.asdict(self)
