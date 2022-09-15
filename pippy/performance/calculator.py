@@ -1,3 +1,4 @@
+import dataclasses
 from os import PathLike
 from pathlib import Path
 
@@ -15,12 +16,13 @@ class PerformanceCalculator:
         self.beatmap_path = beatmap_path
         self.mods = mods
 
-    def _get_difficulty_attributes(self) -> DifficultyAttributes:
+    def _get_beatmap_attributes(self):
         """Helper method to calculate difficulty attributes for the stored map."""
-        return self.client.get_difficulty_attributes(
+        self.difficulty_attributes = self.client.get_difficulty_attributes(
             self.beatmap_path,
             self.mods
         )
+        self.max_combo = self.client.get_max_combo(self.beatmap_path)
 
     @property
     def mods(self) -> list[Mod]:
@@ -31,7 +33,7 @@ class PerformanceCalculator:
     def mods(self, value: list[Mod]):
         """Sets difficulty modifiers and recalculates difficulty attributes."""
         self._mods = value
-        self.difficulty_attributes = self._get_difficulty_attributes()
+        self._get_beatmap_attributes()
 
     def __del__(self):
         """Override to ensure client is disconnected before object deletion."""
@@ -49,8 +51,13 @@ class PerformanceCalculator:
             mods = []
         return PerformanceCalculator(Path(beatmap_path), mods)
 
-    def calculate_pp(self, score_info: ScoreInfo) -> float:
+    def calculate_pp(self, score_info: ScoreInfo, fc=False) -> float:
         """Calculates total pp value for a given play."""
+        score_info = dataclasses.replace(score_info)
+        if fc:
+            score_info.count_300 += score_info.count_miss
+            score_info.count_miss = 0
+            score_info.max_combo = self.max_combo
         return self.client.get_pp(
             self.difficulty_attributes,
             score_info,
