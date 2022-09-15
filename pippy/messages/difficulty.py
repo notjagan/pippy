@@ -11,10 +11,9 @@ class DifficultyAttributes:
         self,
         star_rating: float,
         max_combo: int,
-        aim_difficulty: float,
-        speed_difficulty: float,
-        speed_note_count: float,
-        flashlight_difficulty: float,
+        aim_strain: float,
+        speed_strain: float,
+        flashlight_rating: float | None,
         slider_factor: float,
         approach_rate: float,
         overall_difficulty: float,
@@ -25,10 +24,9 @@ class DifficultyAttributes:
     ):
         self.star_rating = star_rating
         self.max_combo = max_combo
-        self.aim_difficulty = aim_difficulty
-        self.speed_difficulty = speed_difficulty
-        self.speed_note_count = speed_note_count
-        self.flashlight_difficulty = flashlight_difficulty
+        self.aim_strain = aim_strain
+        self.speed_strain = speed_strain
+        self.flashlight_rating = flashlight_rating
         self.slider_factor = slider_factor
         self.approach_rate = approach_rate
         self.overall_difficulty = overall_difficulty
@@ -38,13 +36,11 @@ class DifficultyAttributes:
         self.spinner_count = spinner_count
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        data = {
             'star_rating': self.star_rating,
             'max_combo': self.max_combo,
-            'aim_difficulty': self.aim_difficulty,
-            'speed_difficulty': self.speed_difficulty,
-            'speed_note_count': self.speed_note_count,
-            'flashlight_difficulty': self.flashlight_difficulty,
+            'aim_strain': self.aim_strain,
+            'speed_strain': self.speed_strain,
             'slider_factor': self.slider_factor,
             'approach_rate': self.approach_rate,
             'overall_difficulty': self.overall_difficulty,
@@ -53,6 +49,9 @@ class DifficultyAttributes:
             'slider_count': self.slider_count,
             'spinner_count': self.spinner_count
         }
+        if self.flashlight_rating is not None:
+            data['flashlight_rating'] = self.flashlight_rating
+        return data
 
 
 class DifficultyRequest(Request[DifficultyAttributes]):
@@ -72,10 +71,9 @@ class DifficultyRequest(Request[DifficultyAttributes]):
         return DifficultyAttributes(
             star_rating=attributes['star_rating'],
             max_combo=attributes['max_combo'],
-            aim_difficulty=attributes['aim_difficulty'],
-            speed_difficulty=attributes['speed_difficulty'],
-            speed_note_count=attributes['speed_note_count'],
-            flashlight_difficulty=attributes['flashlight_difficulty'],
+            aim_strain=attributes['aim_strain'],
+            speed_strain=attributes['speed_strain'],
+            flashlight_rating=attributes.get('flashlight_rating'),
             slider_factor=attributes['slider_factor'],
             approach_rate=attributes['approach_rate'],
             overall_difficulty=attributes['overall_difficulty'],

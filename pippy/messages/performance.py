@@ -3,27 +3,7 @@ from pippy.messages.difficulty import DifficultyAttributes
 from pippy.utils import Mod, ScoreInfo
 
 
-class PerformanceAttributes:
-    """Data class containing performance statistics on a given play."""
-
-    def __init__(
-        self,
-        aim: float,
-        speed: float,
-        accuracy: float,
-        flashlight: float,
-        effective_miss_count: float,
-        pp: float
-    ):
-        self.aim = aim
-        self.speed = speed
-        self.accuracy = accuracy
-        self.flashlight = flashlight
-        self.effective_miss_count = effective_miss_count
-        self.pp = pp
-
-
-class PerformanceRequest(Request[PerformanceAttributes]):
+class PerformanceRequest(Request[float]):
     """Request to calculate performance for a given play."""
 
     @classmethod
@@ -42,15 +22,7 @@ class PerformanceRequest(Request[PerformanceAttributes]):
         self.mods = mods
 
     def _process_response(self, data):
-        performance_attributes = data['attributes']
-        return PerformanceAttributes(
-            aim=performance_attributes['aim'],
-            speed=performance_attributes['speed'],
-            accuracy=performance_attributes['accuracy'],
-            flashlight=performance_attributes['flashlight'],
-            effective_miss_count=performance_attributes['effective_miss_count'],
-            pp=performance_attributes['pp'],
-        )
+        return data['pp']
 
     def to_dict(self):
         return super().to_dict() | {

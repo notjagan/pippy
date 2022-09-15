@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using osu.Game.Rulesets.Difficulty;
+using osu.Game.Rulesets.Osu;
 using osu.Game.Rulesets.Osu.Difficulty;
 
 namespace pippy.Server.Performance {
@@ -18,8 +19,8 @@ namespace pippy.Server.Performance {
         }
 
         public IResponse GenerateResponse() {
-            var calculator = new OsuPerformanceCalculator();
-            var performanceAttributes = calculator.Calculate(ScoreInfo.ScoreInfo, DifficultyAttributes);
+            var calculator = new OsuPerformanceCalculator(new OsuRuleset(), DifficultyAttributes, ScoreInfo.ScoreInfo);
+            var performanceAttributes = calculator.Calculate();
             return new PerformanceResponse(performanceAttributes);
         }
     }

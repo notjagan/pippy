@@ -82,13 +82,13 @@ class PippyClient:
         return DifficultyRequest(Path(beatmap_path), mods)
 
     @client_method
-    def get_performance_attributes(
+    def get_pp(
         self,
         difficulty_attributes: DifficultyAttributes,
         score_info: ScoreInfo,
         mods: list[Mod] | None = None
     ) -> PerformanceRequest:
-        """Obtains performance statistics for a play on a given map."""
+        """Obtains performance points for a play on a given map."""
         if mods is None:
             mods = []
         return PerformanceRequest(difficulty_attributes, score_info, mods)

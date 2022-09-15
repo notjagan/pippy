@@ -5,11 +5,11 @@ namespace pippy.Server.Performance {
     internal class PerformanceResponse : IResponse {
         public string Type { get; } = "performance";
 
-        [JsonProperty("attributes")]
-        public readonly PerformanceAttributes PerformanceAttributes;
+        [JsonProperty("pp")]
+        public readonly double PerformancePoints;
 
-        public PerformanceResponse(PerformanceAttributes attributes) {
-            PerformanceAttributes = attributes;
+        public PerformanceResponse(double performancePoints) {
+            PerformancePoints = performancePoints;
         }
     }
 }

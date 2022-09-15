@@ -3,7 +3,6 @@ from pathlib import Path
 
 from pippy.client import PippyClient
 from pippy.messages.difficulty import DifficultyAttributes
-from pippy.messages.performance import PerformanceAttributes
 from pippy.utils import Mod, ScoreInfo
 
 
@@ -50,15 +49,10 @@ class PerformanceCalculator:
             mods = []
         return PerformanceCalculator(Path(beatmap_path), mods)
 
-    def calculate_performance(self, score_info: ScoreInfo) -> PerformanceAttributes:
-        """Calculates performance attributes for a given play."""
-        return self.client.get_performance_attributes(
+    def calculate_pp(self, score_info: ScoreInfo) -> float:
+        """Calculates total pp value for a given play."""
+        return self.client.get_pp(
             self.difficulty_attributes,
             score_info,
             self.mods
         )
-
-    def calculate_pp(self, score_info: ScoreInfo) -> float:
-        """Calculates total pp value for a given play."""
-        performance_attributes = self.calculate_performance(score_info)
-        return performance_attributes.pp
