@@ -1,7 +1,5 @@
 ﻿using Newtonsoft.Json;
 using osu.Game.Beatmaps;
-using osu.Game.Rulesets.Objects.Types;
-using osu.Game.Rulesets.Objects.Legacy.Osu;
 using osu.Game.Rulesets.Osu;
 using osu.Game.Rulesets.Osu.Objects;
 

@@ -3,7 +3,6 @@ from os import PathLike
 from pathlib import Path
 
 from pippy.client import PippyClient
-from pippy.messages.difficulty import DifficultyAttributes
 from pippy.utils import Mod, ScoreInfo
 
 
